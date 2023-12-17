@@ -4,11 +4,13 @@ import datetime
 
 
 def index(request):
-    post_list = Post.objects.select_related('category').filter(
-        pub_date__lte=datetime.datetime.now(),
-        is_published=True,
-        category__is_published=True
-    )[:5]
+    post_list = Post.objects.select_related(
+        'category',
+        'author',
+        'location').filter(
+            pub_date__lte=datetime.datetime.now(),
+            is_published=True,
+            category__is_published=True)[:5]
 
     context = {
         'post_list': post_list
@@ -33,15 +35,14 @@ def post_detail(request, id):
 
 
 def category_posts(request, category_slug):
-    post_list = Post.objects.select_related('category', 'location').filter(
-        is_published=True,
-        category__is_published=True,
-        category__slug=category_slug,
-        pub_date__lte=datetime.datetime.now()
-    )
     category = get_object_or_404(Category,
                                  slug=category_slug,
                                  is_published=True)
+    post_list = get_object_or_404(Category,
+                                  slug=category_slug)
+    post_list = category.categories.filter(
+        is_published=True,
+        pub_date__lte=datetime.datetime.now())
 
     context = {
         'post_list': post_list,
