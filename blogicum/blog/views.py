@@ -38,9 +38,7 @@ def category_posts(request, category_slug):
     category = get_object_or_404(Category,
                                  slug=category_slug,
                                  is_published=True)
-    post_list = get_object_or_404(Category,
-                                  slug=category_slug)
-    post_list = category.categories.filter(
+    post_list = category.posts.filter(
         is_published=True,
         pub_date__lte=datetime.datetime.now())
 
